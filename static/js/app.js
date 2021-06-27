@@ -1,26 +1,11 @@
-// var eyeColor = ["Brown", "Brown", "Brown", "Brown", "Brown",
-//   "Brown", "Brown", "Brown", "Green", "Green",
-//   "Green", "Green", "Green", "Blue", "Blue",
-//   "Blue", "Blue", "Blue", "Blue"];
-// var eyeFlicker = [26.8, 27.9, 23.7, 25, 26.3, 24.8,
-//   25.7, 24.5, 26.4, 24.2, 28, 26.9,
-//   29.1, 25.7, 27.2, 29.9, 28.5, 29.4, 28.3];
 
 const samples = "samples.json"
 
-// Fetch the JSON data and console log it
 d3.json(samples).then((data) => {
+  var listDDVals = data.names; //filter the json by getting just the names tag info
 
-  console.log(data);
-
-  //// define variables for each data section
-  //var listDDVals = [[data].map(name => name.names)];
-  var listDDVals = data.names;
-  console.log(listDDVals);
-
-  populateDropDown(listDDVals);
+  populateDropDown(listDDVals);   //Populate the DropDown list
 });
-
 
 ///////////////////////////////////////////////////
 //   //CREATE BAR
@@ -69,11 +54,27 @@ d3.json(samples).then((data) => {
 
 /////////////////////////////////////////////
 ////Functions
+//Main function to call child functions
+function optionChanged(val) {
+  // Fetch the JSON data and console log it
+  d3.json(samples).then((data) => {
+    //console.log(data);
+
+    var listMetaData = data.metadata;
+    var listOTU = data.samples;
+    //console.log(listMetaData);
+
+    //Populate the Demo Info
+    populateDemoInfo(listMetaData, val);
+  });
+};
+
+//Populates the dropdown list
 function populateDropDown(list) {
   var dropdownTag = document.getElementById("selDataset");
-  console.log(dropdownTag);
-  console.log(list.length);
-  console.log(list);
+  // console.log(dropdownTag);
+  // console.log(list.length);
+  // console.log(list);
 
   for (var i = 0; i < list.length; i++) {
     var newOption = list[i];
@@ -85,3 +86,28 @@ function populateDropDown(list) {
     dropdownTag.append(el);
   }
 };
+
+//Populate the demo information
+function populateDemoInfo(list, val) {
+  var meta = d3.select("#sample-metadata");  //select the html tag to encapsilate the information
+  console.log(meta);
+
+  var filteredList = list.filter(equalsVal(val)); //filter list to the selected value 
+  //console.log(filteredList); //sanity check
+
+  filteredList.forEach((pair) => {
+    var ui = meta.append("ui");
+    Object.entries(pair).forEach(([key, value]) => {
+      var entry = meta.append("li");
+      entry.text(`${key}: ${value}`);
+    });
+  });
+
+  console.log(meta);
+};
+
+function equalsVal(val) {
+  return function (list) {
+    return list.id == val;
+  }
+}

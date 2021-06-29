@@ -1,14 +1,7 @@
 
 const samples = "samples.json"
 
-d3.json(samples).then((data) => {
-  var listDDVals = data.names; //filter the json by getting just the names tag info
-
-  populateDropDown(listDDVals);
-
-});
-
-optionChanged(940);
+init();
 
 /////////////////////////////////////////////
 ////Functions
@@ -30,6 +23,7 @@ function optionChanged(val) {
   });
 };
 
+////////////////////////////////////////////////////////////////////////
 //Populates the dropdown list
 function populateDropDown(list) {
   var initialVal = 0
@@ -49,6 +43,7 @@ function populateDropDown(list) {
   }
 };
 
+////////////////////////////////////////////////////////////////////////
 //Populate the demo information
 function populateDemoInfo(list) {
   var meta = d3.select("#sample-metadata");  //select the html tag to encapsilate the information
@@ -73,6 +68,7 @@ function equalsVal(val) {
   }
 }
 
+////////////////////////////////////////////////////////////////////////
 //create bar
 function populateBar(list) {
   //Create the Traces
@@ -111,7 +107,7 @@ function populateBar(list) {
   Plotly.newPlot("bar", data, layout);
 }
 
-
+////////////////////////////////////////////////////////////////////////
 //Create Bubble
 function populateBubble(list) {
   //Create the Traces
@@ -146,12 +142,13 @@ function populateBubble(list) {
   Plotly.newPlot("bubble", data, layout);
 }
 
+////////////////////////////////////////////////////////////////////////
 //Create gauge
 function populateGauge(list) {
   //Create the Traces
   var wfreq = list.map(rec => rec.wfreq).flat();
 
-  console.log(wfreq); //sanity check
+  //console.log(wfreq); //sanity check
 
   var data = [
     {
@@ -185,4 +182,19 @@ function populateGauge(list) {
 
   var layout = {width: 600, height: 500, margin: { t: 0, b: 0 } };
   Plotly.newPlot('gauge', data, layout);
+}
+
+function init(){
+
+  d3.json(samples).then((data) => {
+    var listDDVals = data.names; //filter the json by getting just the names tag info
+  
+    populateDropDown(listDDVals);
+  
+    const defaultVal = listDDVals[0];
+    //console.log(defaultVal); //sanity check
+
+    optionChanged(defaultVal)
+  });
+
 }
